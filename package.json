@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/wizo06/instagram-auto-embed-discord#readme",
   "dependencies": {
+    "discord.js": "^12.5.1",
     "logger": "github:wizo06/logger",
     "puppeteer": "^5.5.0",
     "toml-require": "^1.2.0"
