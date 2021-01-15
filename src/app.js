@@ -18,6 +18,10 @@ const loginIfNeeded = (page) => {
       let link = await page.url();
       if (link.match(/https:\/\/www\.instagram\.com\/accounts\/login/)) {
         logger.debug('Landed on login page');
+
+        logger.debug('Taking screenshot');
+        await page.screenshot({path: 'login.png'});
+        
         await page.type('input[name="username"]', CONFIG.instagram.username);
         await page.type('input[name="password"]', CONFIG.instagram.password);
         await page.click('button.L3NKy');
@@ -26,10 +30,17 @@ const loginIfNeeded = (page) => {
         link = await page.url();
         if (link.match(/https:\/\/www\.instagram\.com\/accounts\/onetap\//)) {
           logger.debug('Landed on OneTap page');
+
+          logger.debug('Taking screenshot');
+          await page.screenshot({ path: 'onetap.png' });
+
           await page.click('button.yWX7d');
           await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
         }
         logger.debug('Login successful');
+
+        logger.debug('Taking screenshot');
+        await page.screenshot({ path: 'loggedin.png' });
       }
       else {
         logger.debug('Login not needed');
@@ -65,6 +76,13 @@ const loginIfNeeded = (page) => {
   BOT.on('ready', async () => {
     logger.info(`Logged in as ${BOT.user.tag}`);
     logger.info(`**********************************************`);
+
+    const channel = await BOT.channels.fetch(CONFIG.discord.channelID);
+    await channel.send({files: [
+      {attachment: 'login.png'},
+      {attachment: 'onetap.png'},
+      {attachment: 'loggedin.png'}
+    ]});
   });
 
   BOT.login(CONFIG.discord.token).catch(e => logger.error(e));
