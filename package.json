@@ -1,0 +1,25 @@
+{
+  "name": "instagram-auto-embed-discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wizo06/instagram-auto-embed-discord.git"
+  },
+  "keywords": [],
+  "author": "wizo06",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wizo06/instagram-auto-embed-discord/issues"
+  },
+  "homepage": "https://github.com/wizo06/instagram-auto-embed-discord#readme",
+  "dependencies": {
+    "logger": "github:wizo06/logger",
+    "puppeteer": "^5.5.0",
+    "toml-require": "^1.2.0"
+  }
+}
