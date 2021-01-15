@@ -1,5 +1,6 @@
 const logger = require('logger');
 const discord = require('discord.js');
+const path = require('path');
 
 const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
@@ -16,7 +17,9 @@ const run = async (msg, browser) => {
       const USERNAME_DIV = 'e1e1d';
       const DESCRIPTION_DIV = 'P9YgZ';
 
+      logger.debug('Creating page');
       const page = await browser.newPage();
+      logger.debug(`Navigating to post ${link}`);
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
@@ -65,6 +68,7 @@ const run = async (msg, browser) => {
         }, BUTTON_CLASS);
       }
 
+      logger.debug('Closing page');
       await page.close();
 
       // Dedupe
@@ -93,7 +97,9 @@ const run = async (msg, browser) => {
       const DESCRIPTION_DIV = '-vDIg';
       const USERNAME_CLASS = '_7UhW9';
 
+      logger.debug('Creating page');
       const page = await browser.newPage();
+      logger.debug(`Navigating to post ${link}`);
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
@@ -109,6 +115,7 @@ const run = async (msg, browser) => {
 
       let { profilePictureURL, username, description } = await page.evaluate(evalFunction, PROFILE_DIV, PROFILE_PICTURE, DESCRIPTION_DIV, USERNAME_CLASS);
 
+      logger.debug('Closing page');
       await page.close();
 
       const embeds = [
