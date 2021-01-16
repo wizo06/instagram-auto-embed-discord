@@ -12,30 +12,31 @@ const loginIfNeeded = (page) => {
   return new Promise(async (resolve, reject) => {
     try {
       logger.debug('Navigating to @instagram');
+      // await page.goto('https://www.instagram.com/accounts/login')
       await page.goto('https://www.instagram.com/instagram/');
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
       let link = await page.url();
-      if (link.match(/https:\/\/www\.instagram\.com\/accounts\/login/)) {
+      if (link.match(/https:\/\/(www\.)*instagram\.com\/accounts\/login/)) {
         logger.debug('Landed on login page');
 
-        logger.debug('Taking screenshot');
-        await page.screenshot({path: 'login.png'});
-        
         await page.type('input[name="username"]', CONFIG.instagram.username);
         await page.type('input[name="password"]', CONFIG.instagram.password);
         await page.click('button.L3NKy');
         await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
+        
+        logger.debug('Taking screenshot');
+        await page.screenshot({path: 'login.png'});
 
         link = await page.url();
-        if (link.match(/https:\/\/www\.instagram\.com\/accounts\/onetap\//)) {
+        if (link.match(/https:\/\/(www\.)*instagram\.com\/accounts\/onetap\//)) {
           logger.debug('Landed on OneTap page');
+          
+          await page.click('button.yWX7d');
+          await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
           logger.debug('Taking screenshot');
           await page.screenshot({ path: 'onetap.png' });
-
-          await page.click('button.yWX7d');
-          await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
         }
         logger.debug('Login successful');
 
@@ -58,19 +59,9 @@ const loginIfNeeded = (page) => {
 (async () => {
   logger.debug('Launching puppeteer.');
   const browser = await puppeteer.launch({ 
-    headless: true, 
+    headless: false, 
     defaultViewport: { width: 800, height: 1440 },
-    ignoreHTTPSErrors: true,
-    userDataDir: './tmp',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-infobars',
-      '--window-position=0,0',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
-      '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"'
-    ]
+    executablePath: '/usr/bin/google-chrome'
   });
   const page = await browser.newPage();
   await loginIfNeeded(page);
@@ -78,7 +69,8 @@ const loginIfNeeded = (page) => {
   logger.debug('Puppeteer launched successfully for instagram auto embed.');
 
   BOT.on('message', async msg => {
-    if (msg.content.match(/https:\/\/www\.instagram\.com\/.+/)) {
+    if (msg.content.match(/https:\/\/(www\.)*instagram\.com\/.+/)) {
+      logger.debug('Instagram link detected');
       require(path.join(process.cwd(), `src/autoEmbed/instagram.js`)).run(msg, browser);
     }
   });
