@@ -41,7 +41,7 @@ const run = async (msg, browser) => {
 
         if (videoCollection.length !== 0) {
           for (video of videoCollection) {
-            temp.push(video.src);
+            temp.push(video.poster);
           }
         }
 
