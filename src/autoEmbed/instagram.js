@@ -82,7 +82,7 @@ const run = async (msg, browser) => {
           .setAuthor(result.username, result.profilePictureURL, `https://www.instagram.com/${result.username}/`)
           .setDescription(result.postDescription)
           .setImage(picture)
-          .setFooter(`Instagram | ${result.temp.length} picture(s)`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+          .setFooter(`Instagram | ${result.temp.length} picture(s) and/or video(s)`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
         );
       }
 
@@ -103,7 +103,7 @@ const run = async (msg, browser) => {
 
       logger.debug('Creating page');
       const page = await browser.newPage();
-      logger.debug(`Navigating to post ${link}`);
+      logger.debug(`Navigating to profile ${link}`);
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 

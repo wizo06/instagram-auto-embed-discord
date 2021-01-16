@@ -12,7 +12,6 @@ const loginIfNeeded = (page) => {
   return new Promise(async (resolve, reject) => {
     try {
       logger.debug('Navigating to @instagram');
-      // await page.goto('https://www.instagram.com/accounts/login')
       await page.goto('https://www.instagram.com/instagram/');
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
@@ -25,8 +24,8 @@ const loginIfNeeded = (page) => {
         await page.click('button.L3NKy');
         await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
         
-        logger.debug('Taking screenshot');
-        await page.screenshot({path: 'login.png'});
+        // logger.debug('Taking screenshot');
+        // await page.screenshot({path: 'login.png'});
 
         link = await page.url();
         if (link.match(/https:\/\/(www\.)*instagram\.com\/accounts\/onetap\//)) {
@@ -35,13 +34,13 @@ const loginIfNeeded = (page) => {
           await page.click('button.yWX7d');
           await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
-          logger.debug('Taking screenshot');
-          await page.screenshot({ path: 'onetap.png' });
+          // logger.debug('Taking screenshot');
+          // await page.screenshot({ path: 'onetap.png' });
         }
         logger.debug('Login successful');
 
-        logger.debug('Taking screenshot');
-        await page.screenshot({ path: 'loggedin.png' });
+        // logger.debug('Taking screenshot');
+        // await page.screenshot({ path: 'loggedin.png' });
       }
       else {
         logger.debug('Login not needed');
@@ -59,9 +58,8 @@ const loginIfNeeded = (page) => {
 (async () => {
   logger.debug('Launching puppeteer.');
   const browser = await puppeteer.launch({ 
-    headless: false, 
+    headless: true, 
     defaultViewport: { width: 800, height: 1440 },
-    executablePath: '/usr/bin/google-chrome'
   });
   const page = await browser.newPage();
   await loginIfNeeded(page);
@@ -83,12 +81,12 @@ const loginIfNeeded = (page) => {
     logger.info(`Logged in as ${BOT.user.tag}`);
     logger.info(`**********************************************`);
 
-    const channel = await BOT.channels.fetch(CONFIG.discord.channelID);
-    await channel.send({files: [
-      {attachment: 'login.png'},
-      {attachment: 'onetap.png'},
-      {attachment: 'loggedin.png'}
-    ]});
+    // const channel = await BOT.channels.fetch(CONFIG.discord.channelID);
+    // await channel.send({files: [
+    //   {attachment: 'login.png'},
+    //   {attachment: 'onetap.png'},
+    //   {attachment: 'loggedin.png'}
+    // ]});
   });
 
   BOT.login(CONFIG.discord.token).catch(e => logger.error(e));
