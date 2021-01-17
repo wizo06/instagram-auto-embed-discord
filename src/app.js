@@ -50,7 +50,7 @@ const loginIfNeeded = (page) => {
     }
     catch (e) {
       logger.error('Login failed');
-      resolve();
+      reject();
     }
   });
 };
@@ -62,7 +62,7 @@ const loginIfNeeded = (page) => {
     defaultViewport: { width: 800, height: 1440 },
   });
   const page = await browser.newPage();
-  await loginIfNeeded(page);
+  await loginIfNeeded(page).catch(e => process.exit(1));
   await page.close();
   logger.debug('Puppeteer launched successfully for instagram auto embed.');
 

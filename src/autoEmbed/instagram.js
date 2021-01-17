@@ -8,9 +8,11 @@ const isPrivate = (page) => {
   return new Promise(async (resolve, reject) => {
     try {
       await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
+      logger.debug('Profile is private');
       resolve(true);
     }
     catch (e) {
+      logger.debug('Profile is public');
       resolve(false);
     }
   });
