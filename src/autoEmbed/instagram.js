@@ -4,6 +4,13 @@ const path = require('path');
 
 const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
+const isPrivate = (page) => {
+  return new Promise(async (resolve, reject) => {
+    let result = await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
+    resolve(result);
+  });
+};
+
 const run = async (msg, browser) => {
   try {
     const link = msg.content.match(/https:\/\/(www\.)*instagram\.com\/.+/)[0];
@@ -22,6 +29,11 @@ const run = async (msg, browser) => {
       logger.debug(`Navigating to post ${link}`);
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
+
+      if (await isPrivate(page)) {
+        logger.debug('User is private. Closing page.');
+        return await page.close();
+      }
 
       const evalFunction = (IMG_CLASS, VID_CLASS, POST_DIV, PROFILE_PICTURE, USERNAME_DIV, DESCRIPTION_DIV) => {
         let temp = [];
@@ -107,6 +119,11 @@ const run = async (msg, browser) => {
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
+      if (await isPrivate(page)) {
+        logger.debug('User is private. Closing page.');
+        return await page.close();
+      }
+      
       const evalFunction = (PROFILE_DIV, PROFILE_PICTURE, DESCRIPTION_DIV, USERNAME_CLASS) => {
         const profilePictureURL = document.getElementsByClassName(PROFILE_DIV)[0].getElementsByClassName(PROFILE_PICTURE)[0].src;
         const username = document.getElementsByClassName(USERNAME_CLASS)[0].innerText;
