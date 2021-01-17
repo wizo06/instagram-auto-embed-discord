@@ -6,8 +6,13 @@ const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
 const isPrivate = (page) => {
   return new Promise(async (resolve, reject) => {
-    let result = await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
-    resolve(result);
+    try {
+      await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
+      resolve(true);
+    }
+    catch (e) {
+      resolve(false);
+    }
   });
 };
 
