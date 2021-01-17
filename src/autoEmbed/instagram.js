@@ -6,8 +6,8 @@ const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
 const run = async (msg, browser) => {
   try {
-    const link = msg.content.match(/https:\/\/www\.instagram\.com\/.+/)[0];
-    if (link.match(/https:\/\/www\.instagram\.com\/p\/[\w\d]+/)) {
+    const link = msg.content.match(/https:\/\/(www\.)*instagram\.com\/.+/)[0];
+    if (link.match(/https:\/\/(www\.)*instagram\.com\/p\/[\w\d]+/)) {
       // Post
       const POST_DIV = 'ltEKP';
       const IMG_CLASS = 'FFVAD';
@@ -82,7 +82,7 @@ const run = async (msg, browser) => {
           .setAuthor(result.username, result.profilePictureURL, `https://www.instagram.com/${result.username}/`)
           .setDescription(result.postDescription)
           .setImage(picture)
-          .setFooter(`Instagram | ${result.temp.length} picture(s)`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+          .setFooter(`Instagram | ${result.temp.length} picture(s) and/or video(s)`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
         );
       }
 
@@ -90,7 +90,11 @@ const run = async (msg, browser) => {
       await webhook.send({ embeds });
       await webhook.delete();
     }
-    else if (link.match(/https:\/\/www\.instagram\.com\/.+\/$/)) {
+    else if (link.match(/https:\/\/(www\.)*instagram\.com\/stories\/[\w\d]+\/\d+/)) {
+      // Stories
+      console.log('stories')
+    }
+    else {
       // Profile
       const PROFILE_DIV = 'vtbgv ';
       const PROFILE_PICTURE = '_6q-tv';
@@ -99,7 +103,7 @@ const run = async (msg, browser) => {
 
       logger.debug('Creating page');
       const page = await browser.newPage();
-      logger.debug(`Navigating to post ${link}`);
+      logger.debug(`Navigating to profile ${link}`);
       await page.goto(link);
       await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
 
@@ -131,10 +135,6 @@ const run = async (msg, browser) => {
       const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
       await webhook.send({ embeds });
       await webhook.delete();
-    }
-    else if (link.match(/https:\/\/www\.instagram\.com\/stories\/[\w\d]+\/\d+/)) {
-      // Stories
-      console.log('stories')
     }
   }
   catch (e) {
