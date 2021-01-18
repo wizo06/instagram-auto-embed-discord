@@ -19,8 +19,11 @@ const loginIfNeeded = (page) => {
       if (link.match(/https:\/\/(www\.)*instagram\.com\/accounts\/login/)) {
         logger.debug('Landed on login page');
 
+        logger.deubg('Input username');
         await page.type('input[name="username"]', CONFIG.instagram.username);
+        logger.deubg('Input password');
         await page.type('input[name="password"]', CONFIG.instagram.password);
+        logger.deubg('Click Login button');
         await page.click('button.L3NKy');
         await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
         
