@@ -48,9 +48,14 @@ const run = async (msg, browser) => {
         let videoCollection = document.getElementsByClassName(POST_DIV)[0].getElementsByClassName(VID_CLASS);
 
         const profilePictureURL = document.getElementsByClassName(PROFILE_PICTURE)[0].src;
-        const username = document.getElementsByClassName(USERNAME_DIV)[0].getElementsByTagName('span')[0].innerText;
-        let arr = [...document.getElementsByClassName(DESCRIPTION_DIV)[0].getElementsByTagName('span')];
-        const postDescription = arr.pop().innerText;
+        const username = document.getElementsByClassName(USERNAME_DIV)[0].getElementsByTagName('a')[0].innerText;
+
+        let postDescription = '';
+        const descriptionElement = document.getElementsByClassName(DESCRIPTION_DIV)[0];
+        if (descriptionElement) {
+          const arr = [...descriptionElement.getElementsByTagName('span')];
+          postDescription = arr.pop().innerText;
+        }
 
         if (imgCollection.length !== 0) {
           for (img of imgCollection) {
