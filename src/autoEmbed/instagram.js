@@ -41,7 +41,7 @@ const run = async (msg, browser) => {
         logger.debug('User is private. Closing page.');
         return await page.close();
       }
-
+      await page.screenshot({ path: 'pleasework.png' });
       const evalFunction = (IMG_CLASS, VID_CLASS, POST_DIV, PROFILE_PICTURE, USERNAME_DIV, DESCRIPTION_DIV) => {
         let temp = [];
         let imgCollection = document.getElementsByClassName(POST_DIV)[0].getElementsByClassName(IMG_CLASS);
@@ -93,7 +93,7 @@ const run = async (msg, browser) => {
       }
 
       logger.debug('Closing page');
-      await page.close();
+      // await page.close();
 
       // Dedupe
       result.temp = [...new Set(result.temp)];

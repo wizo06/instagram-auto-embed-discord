@@ -1,12 +1,18 @@
 const path = require('path');
 const discord = require('discord.js');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
 const logger = require('logger');
+const fs = require('fs');
 require('toml-require').install({ toml: require('toml') });
 
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
+
 const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
+const cookiesPath = 'cookies.json';
 
 const BOT = new discord.Client({ retryLimit: Infinity });
+
 
 const loginIfNeeded = (page) => {
   return new Promise(async (resolve, reject) => {
@@ -42,6 +48,10 @@ const loginIfNeeded = (page) => {
         }
         logger.debug('Login successful');
 
+        const cookiesObject = await page.cookies();
+        fs.writeFileSync(cookiesPath, JSON.stringify(cookiesObject));
+        logger.debug('Session has been saved to ' + cookiesPath);
+
         // logger.debug('Taking screenshot');
         // await page.screenshot({ path: 'loggedin.png' });
       }
@@ -61,10 +71,12 @@ const loginIfNeeded = (page) => {
 (async () => {
   logger.debug('Launching puppeteer.');
   const browser = await puppeteer.launch({ 
+    args: ['--no-sandbox'],
     headless: true, 
     defaultViewport: { width: 800, height: 1440 },
   });
   const page = await browser.newPage();
+  
   await loginIfNeeded(page).catch(e => process.exit(1));
   await page.close();
   logger.debug('Puppeteer launched successfully for instagram auto embed.');
