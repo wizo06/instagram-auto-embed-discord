@@ -2,14 +2,12 @@ const path = require('path');
 const discord = require('discord.js');
 const puppeteer = require('puppeteer-extra');
 const logger = require('logger');
-const fs = require('fs');
 require('toml-require').install({ toml: require('toml') });
 
-const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
-const cookiesPath = 'cookies.json';
 
 const BOT = new discord.Client({ retryLimit: Infinity });
 
@@ -47,10 +45,6 @@ const loginIfNeeded = (page) => {
           // await page.screenshot({ path: 'onetap.png' });
         }
         logger.debug('Login successful');
-
-        const cookiesObject = await page.cookies();
-        fs.writeFileSync(cookiesPath, JSON.stringify(cookiesObject));
-        logger.debug('Session has been saved to ' + cookiesPath);
 
         // logger.debug('Taking screenshot');
         // await page.screenshot({ path: 'loggedin.png' });

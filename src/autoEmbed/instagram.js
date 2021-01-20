@@ -1,6 +1,7 @@
 const logger = require('logger');
 const discord = require('discord.js');
 const path = require('path');
+const fetch = require('node-fetch');
 
 const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
@@ -18,7 +19,31 @@ const isPrivate = (page) => {
   });
 };
 
+const editMessage = (webhook, msg, embeds) => {
+  return new Promise(async (resolve, reject) => {
+    const body = { embeds };
+
+    await fetch(`https://discord.com/api/webhooks/${webhook.id}/${webhook.token}/messages/${msg.id}`, {
+      method: 'patch',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    resolve();
+  });
+
+};
+
 const run = async (msg, browser) => {
+  const initEmbed = [new discord.MessageEmbed()
+    .setColor('#E1306C')
+    .setTitle('Scraping...')
+    .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+  ];
+
+  const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
+  const sentMessage = await webhook.send({ embeds: initEmbed });
+  
   try {
     const link = msg.content.match(/https:\/\/(www\.)*instagram\.com\/.+/)[0];
     if (link.match(/https:\/\/(www\.)*instagram\.com\/p\/[\w\d]+/)) {
@@ -41,7 +66,7 @@ const run = async (msg, browser) => {
         logger.debug('User is private. Closing page.');
         return await page.close();
       }
-      await page.screenshot({ path: 'pleasework.png' });
+
       const evalFunction = (IMG_CLASS, VID_CLASS, POST_DIV, PROFILE_PICTURE, USERNAME_DIV, DESCRIPTION_DIV) => {
         let temp = [];
         let imgCollection = document.getElementsByClassName(POST_DIV)[0].getElementsByClassName(IMG_CLASS);
@@ -80,7 +105,7 @@ const run = async (msg, browser) => {
 
       while (nextButton) {
         await page.click(`button.${BUTTON_CLASS}`);
-        await page.waitForTimeout(CONFIG.instagram.navigationTimeout);
+        await page.waitForTimeout(500);
 
         let moreResult = await page.evaluate(evalFunction, IMG_CLASS, VID_CLASS, POST_DIV, PROFILE_PICTURE, USERNAME_DIV, DESCRIPTION_DIV);
 
@@ -93,7 +118,7 @@ const run = async (msg, browser) => {
       }
 
       logger.debug('Closing page');
-      // await page.close();
+      await page.close();
 
       // Dedupe
       result.temp = [...new Set(result.temp)];
@@ -110,8 +135,7 @@ const run = async (msg, browser) => {
         );
       }
 
-      const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
-      await webhook.send({ embeds });
+      await editMessage(webhook, sentMessage, embeds);
       await webhook.delete();
     }
     else if (link.match(/https:\/\/(www\.)*instagram\.com\/stories\/[\w\d]+\/\d+/)) {
@@ -161,12 +185,19 @@ const run = async (msg, browser) => {
           .setFooter('Instagram', 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
       ];
 
-      const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
-      await webhook.send({ embeds });
+      await editMessage(webhook, sentMessage, embeds);
       await webhook.delete();
     }
   }
   catch (e) {
+    const errorEmbed = [new discord.MessageEmbed()
+      .setColor('#E1306C')
+      .setTitle('ERROR')
+      .setDescription(e)
+      .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+    ];
+    await editMessage(webhook, sentMessage, errorEmbed);
+    await webhook.delete();
     logger.error(e);
   }
 };

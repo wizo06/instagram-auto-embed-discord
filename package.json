@@ -20,6 +20,7 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "logger": "github:wizo06/logger",
+    "node-fetch": "^2.6.1",
     "puppeteer": "^5.5.0",
     "puppeteer-extra": "^3.1.16",
     "puppeteer-extra-plugin-stealth": "^2.6.6",
