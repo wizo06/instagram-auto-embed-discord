@@ -3,8 +3,8 @@ Discord bot for auto embedding instagram links
 
 # Getting Started
 Discord permissions
-- Manage Webhooks
 - View Channels
+- Send Messages
 
 ```
 git clone https://github.com/wizo06/instagram-auto-embed-discord.git

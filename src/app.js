@@ -11,7 +11,6 @@ const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 
 const BOT = new discord.Client({ retryLimit: Infinity });
 
-
 const loginIfNeeded = (page) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -66,7 +65,7 @@ const loginIfNeeded = (page) => {
   logger.debug('Launching puppeteer.');
   const browser = await puppeteer.launch({ 
     args: ['--no-sandbox'],
-    headless: true, 
+    headless: false, 
     defaultViewport: { width: 800, height: 1440 },
   });
   const page = await browser.newPage();

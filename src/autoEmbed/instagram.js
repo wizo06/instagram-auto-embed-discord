@@ -41,8 +41,10 @@ const run = async (msg, browser) => {
     .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
   ];
 
-  const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
-  const sentMessage = await webhook.send({ embeds: initEmbed });
+  // const webhook = await msg.channel.createWebhook('Instagram Auto Embed');
+  // const sentMessage = await webhook.send({ embeds: initEmbed });
+
+  const sentMessage = await msg.channel.send({ embed: initEmbed[0] });
   
   try {
     const link = msg.content.match(/https:\/\/(www\.)*instagram\.com\/.+/)[0];
@@ -135,12 +137,39 @@ const run = async (msg, browser) => {
         );
       }
 
-      await editMessage(webhook, sentMessage, embeds);
-      await webhook.delete();
+      // await editMessage(webhook, sentMessage, embeds);
+      // await webhook.delete();
+      await sentMessage.edit({ embed: embeds[0] });
     }
     else if (link.match(/https:\/\/(www\.)*instagram\.com\/stories\/[\w\d]+\/\d+/)) {
       // Stories
-      console.log('stories')
+      const notSupportedEmbed = [new discord.MessageEmbed()
+        .setColor('#E1306C')
+        .setTitle('Stories not supported at the moment')
+        // .setDescription(e)
+        .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+      ];
+      await sentMessage.edit({ embed: notSupportedEmbed[0] });
+    }
+    else if (link.match(/https:\/\/(www\.)*instagram\.com\/reel\/[\w\d]+\/\d+/)) {
+      // Reel
+      const notSupportedEmbed = [new discord.MessageEmbed()
+        .setColor('#E1306C')
+        .setTitle('Reel not supported at the moment')
+        // .setDescription(e)
+        .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+      ];
+      await sentMessage.edit({ embed: notSupportedEmbed[0] });
+    }
+    else if (link.match(/https:\/\/(www\.)*instagram\.com\/tv\/[\w\d]+\/\d+/)) {
+      // TV
+      const notSupportedEmbed = [new discord.MessageEmbed()
+        .setColor('#E1306C')
+        .setTitle('TV not supported at the moment')
+        // .setDescription(e)
+        .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+      ];
+      await sentMessage.edit({ embed: notSupportedEmbed[0] });
     }
     else {
       // Profile
@@ -185,8 +214,10 @@ const run = async (msg, browser) => {
           .setFooter('Instagram', 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
       ];
 
-      await editMessage(webhook, sentMessage, embeds);
-      await webhook.delete();
+      // await editMessage(webhook, sentMessage, embeds);
+      // await webhook.delete();
+
+      await sentMessage.edit({ embed: embeds[0] });
     }
   }
   catch (e) {
@@ -196,8 +227,10 @@ const run = async (msg, browser) => {
       .setDescription(e)
       .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
     ];
-    await editMessage(webhook, sentMessage, errorEmbed);
-    await webhook.delete();
+    // await editMessage(webhook, sentMessage, errorEmbed);
+    // await webhook.delete();
+
+    await sentMessage.edit({ embed: errorEmbed[0] });
     logger.error(e);
   }
 };
