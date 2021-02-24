@@ -8,12 +8,18 @@ const CONFIG = require(path.join(process.cwd(), 'config/user_config.toml'));
 const isPrivate = (page) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
-      logger.debug('Profile is private');
-      resolve(true);
+      let isPrivate = await page.evaluate('window._sharedData.entry_data.ProfilePage[0].graphql.user.is_private');
+      if (isPrivate) {
+        logger.debug('Profile is private');
+        resolve(true);
+      }
+      else {
+        logger.debug('Profile is public');
+        resolve(false);
+      }
     }
     catch (e) {
-      logger.debug('Profile is public');
+      logger.debug('Error checking for privacy of profile');
       resolve(false);
     }
   });
@@ -66,7 +72,15 @@ const run = async (msg, browser) => {
 
       if (await isPrivate(page)) {
         logger.debug('User is private. Closing page.');
-        return await page.close();
+        await page.close();
+        const errorEmbed = [new discord.MessageEmbed()
+          .setColor('#E1306C')
+          .setTitle('Profile is private')
+          .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+        ];
+
+        await sentMessage.edit({ embed: errorEmbed[0] });
+        return;
       }
 
       const evalFunction = (IMG_CLASS, VID_CLASS, POST_DIV, PROFILE_PICTURE, USERNAME_DIV, DESCRIPTION_DIV) => {
@@ -186,7 +200,15 @@ const run = async (msg, browser) => {
 
       if (await isPrivate(page)) {
         logger.debug('User is private. Closing page.');
-        return await page.close();
+        await page.close();
+        const errorEmbed = [new discord.MessageEmbed()
+          .setColor('#E1306C')
+          .setTitle('Profile is private')
+          .setFooter(`Instagram`, 'https://instagram-brand.com/wp-content/uploads/2016/11/Instagram_AppIcon_Aug2017.png?w=300')
+        ];
+
+        await sentMessage.edit({ embed: errorEmbed[0] });
+        return;
       }
       
       const evalFunction = (PROFILE_DIV, PROFILE_PICTURE, DESCRIPTION_DIV, USERNAME_CLASS) => {
