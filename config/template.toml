@@ -1,8 +1,0 @@
-[discord]
-  token = ""
-
-[instagram]
-  username = ""
-  password = ""
-
-  navigationTimeout = 2000
