@@ -30,7 +30,7 @@ client.on('message', async msg => {
   
       const embed = new Discord.MessageEmbed()
         .setColor('#E1306C')
-        .setFooter(val, 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+        .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
 
       // $('script').each(function (i, elem) {
       //   if ($(this)['0'].children[0]?.data.startsWith('window.__additionalDataLoaded')) {
@@ -72,7 +72,7 @@ client.on('message', async msg => {
       
       const embed = new Discord.MessageEmbed()
         .setColor('#E1306C')
-        .setFooter(val, 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+        .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
       
       $('meta').each(function (i, elem) {
         const property = $(this)['0'].attribs.property
