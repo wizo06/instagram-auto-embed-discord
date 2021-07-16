@@ -51,7 +51,40 @@ client.on('message', async msg => {
       return await msg.channel.send(embed)
     }
   
+    // Reel
     if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/reel\//i)) {
+      const options = {
+        headers: {
+          'Cookie': config.instagram.cookie
+        }
+      }
+      const res = await fetch(normalizedLink, options)
+      const body = await res.text()
+      const $ = cheerio.load(body)
+
+      const embed = new Discord.MessageEmbed()
+      .setColor('#E1306C')
+      .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+
+      $('script').each(function (i, elem) {
+        if ($(this)['0'].children[0]?.data.startsWith('window.__additionalDataLoaded')) {
+          const func = $(this)['0'].children[0]?.data
+          const extractedJson = func.replace(/(^window\.__additionalDataLoaded\('(\/|[0-9A-z]|-)+',)|(\);$)/g, '')
+          const json = JSON.parse(extractedJson)
+          const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
+          
+          embed
+            .setImage(json.graphql.shortcode_media.display_url)
+            .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
+            .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+        }
+      })
+
+      return await msg.channel.send(embed)
+    }
+
+    // TV
+    if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/tv\//i)) {
       const options = {
         headers: {
           'Cookie': config.instagram.cookie
