@@ -18,7 +18,9 @@ client.on('message', async msg => {
     const urlObj = new URL(link)
     const normalizedLink = `${urlObj.origin}${urlObj.pathname}`
     logger.info(normalizedLink)
-    if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/p\//)) {
+
+    // Post
+    if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/p\//i)) {
       const options = {
         headers: {
           'Cookie': config.instagram.cookie
@@ -49,7 +51,8 @@ client.on('message', async msg => {
       return await msg.channel.send(embed)
     }
   
-    if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/[\w]+\/?$/)) {      
+    // Profile
+    if (normalizedLink.match(/^https:\/\/(www\.)?instagram\.com\/(\w|\.)+\/?$/i)) {      
       const options = {
         headers: {
           'Cookie': config.instagram.cookie
