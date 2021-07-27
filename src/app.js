@@ -1,17 +1,17 @@
 const cheerio = require('cheerio')
-const Discord = require('discord.js')
+const { Client, Intents, MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch')
 const logger = require('@wizo06/logger')
 
 const config = require('@iarna/toml').parse(require('fs').readFileSync('config/config.toml'))
 
-const client = new Discord.Client()
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 client.on('ready', () => {
   logger.success(`Logged in as ${client.user.tag}!`)
 })
 
-client.on('message', async msg => {
+client.on('messageCreate', async msg => {
   const arr = msg.content.split(' ')
   const filtered = arr.filter(ele => ele.match(/^https:\/\/(www\.)?instagram\.com/))
   for (const link of filtered) {
@@ -30,9 +30,7 @@ client.on('message', async msg => {
       const body = await res.text()
       const $ = cheerio.load(body)
   
-      const embed = new Discord.MessageEmbed()
-        .setColor('#E1306C')
-        .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+      const embeds = []
 
       $('script').each(function (i, elem) {
         if ($(this)['0'].children[0]?.data.startsWith('window.__additionalDataLoaded')) {
@@ -41,14 +39,21 @@ client.on('message', async msg => {
           const json = JSON.parse(extractedJson)
           const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
           
-          embed
-            .setImage(json.graphql.shortcode_media.display_url)
-            .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-            .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+          for (const edge of json.graphql.shortcode_media.edge_sidecar_to_children.edges) {
+            const embed = new MessageEmbed()
+              .setColor('#E1306C')
+              .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+              .setImage(edge.node.display_url)
+              .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
+              .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+              .setURL(`https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+
+            embeds.push(embed)
+          }
         }
       })
   
-      return await msg.channel.send(embed)
+      return await msg.channel.send({ embeds })
     }
   
     // Reel
@@ -62,7 +67,7 @@ client.on('message', async msg => {
       const body = await res.text()
       const $ = cheerio.load(body)
 
-      const embed = new Discord.MessageEmbed()
+      const embed = new MessageEmbed()
       .setColor('#E1306C')
       .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
 
@@ -94,7 +99,7 @@ client.on('message', async msg => {
       const body = await res.text()
       const $ = cheerio.load(body)
 
-      const embed = new Discord.MessageEmbed()
+      const embed = new MessageEmbed()
       .setColor('#E1306C')
       .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
 
@@ -126,7 +131,7 @@ client.on('message', async msg => {
       const body = await res.text()
       const $ = cheerio.load(body)
       
-      const embed = new Discord.MessageEmbed()
+      const embed = new MessageEmbed()
         .setColor('#E1306C')
         .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
       

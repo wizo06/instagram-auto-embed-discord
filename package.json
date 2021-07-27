@@ -7,9 +7,9 @@
   "author": "wizo06",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@wizo06/logger": "^1.0.0",
+    "@wizo06/logger": "^1.1.0",
     "cheerio": "^1.0.0-rc.10",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.0-dev.4886ae2.1627344219",
     "node-fetch": "^2.6.1"
   }
 }
