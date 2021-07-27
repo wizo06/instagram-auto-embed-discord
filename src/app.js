@@ -37,19 +37,35 @@ client.on('messageCreate', async msg => {
           const func = $(this)['0'].children[0]?.data
           const extractedJson = func.replace(/(^window\.__additionalDataLoaded\('(\/|[0-9A-z]|-)+',)|(\);$)/g, '')
           const json = JSON.parse(extractedJson)
-          const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
+          const data = json.graphql.shortcode_media
+          const author = `${data.owner.full_name} (${data.owner.username})`
           
-          for (const edge of json.graphql.shortcode_media.edge_sidecar_to_children.edges) {
-            const embed = new MessageEmbed()
+          // Multi images in a single post
+          if (data.edge_sidecar_to_children) {
+            for (const edge of data.edge_sidecar_to_children.edges) {
+              const embed = new MessageEmbed()
               .setColor('#E1306C')
               .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
               .setImage(edge.node.display_url)
-              .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-              .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
-              .setURL(`https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+              .setDescription(data.edge_media_to_caption.edges[0]?.node.text)
+              .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
+              .setURL(`https://www.instagram.com/${data.owner.username}`)
+  
+              embeds.push(embed)
+            }
+          }
+          // Single image in a single post
+          else {
+            const embed = new MessageEmbed()
+            .setColor('#E1306C')
+            .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+            .setImage(data.display_url)
+            .setDescription(data.edge_media_to_caption.edges[0]?.node.text)
+            .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
+            .setURL(`https://www.instagram.com/${data.owner.username}`)
 
             embeds.push(embed)
-          }
+      }
         }
       })
   
@@ -79,9 +95,9 @@ client.on('messageCreate', async msg => {
           const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
           
           embed
-            .setImage(json.graphql.shortcode_media.display_url)
-            .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-            .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+          .setImage(json.graphql.shortcode_media.display_url)
+          .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
+          .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
         }
       })
 
@@ -111,9 +127,9 @@ client.on('messageCreate', async msg => {
           const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
           
           embed
-            .setImage(json.graphql.shortcode_media.display_url)
-            .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-            .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+          .setImage(json.graphql.shortcode_media.display_url)
+          .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
+          .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
         }
       })
 
@@ -132,8 +148,8 @@ client.on('messageCreate', async msg => {
       const $ = cheerio.load(body)
       
       const embed = new MessageEmbed()
-        .setColor('#E1306C')
-        .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
+      .setColor('#E1306C')
+      .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
       
       $('meta').each(function (i, elem) {
         const property = $(this)['0'].attribs.property
