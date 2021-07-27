@@ -47,7 +47,7 @@ client.on('messageCreate', async msg => {
               .setColor('#E1306C')
               .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
               .setImage(edge.node.display_url)
-              .setDescription(data.edge_media_to_caption.edges[0]?.node.text)
+              .setDescription(data.edge_media_to_caption.edges[0] ? data.edge_media_to_caption.edges[0].node.text : '')
               .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
               .setURL(`https://www.instagram.com/${data.owner.username}`)
   
@@ -60,7 +60,7 @@ client.on('messageCreate', async msg => {
             .setColor('#E1306C')
             .setFooter('Instagram', 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico')
             .setImage(data.display_url)
-            .setDescription(data.edge_media_to_caption.edges[0]?.node.text)
+            .setDescription(data.edge_media_to_caption.edges[0] ? data.edge_media_to_caption.edges[0].node.text : '')
             .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
             .setURL(`https://www.instagram.com/${data.owner.username}`)
 
@@ -92,12 +92,13 @@ client.on('messageCreate', async msg => {
           const func = $(this)['0'].children[0]?.data
           const extractedJson = func.replace(/(^window\.__additionalDataLoaded\('(\/|[0-9A-z]|-)+',)|(\);$)/g, '')
           const json = JSON.parse(extractedJson)
-          const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
+          const data = json.graphql.shortcode_media
+          const author = `${data.owner.full_name} (${data.owner.username})`
           
           embed
-          .setImage(json.graphql.shortcode_media.display_url)
-          .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-          .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+          .setImage(data.display_url)
+          .setDescription(data.edge_media_to_caption.edges[0] ? data.edge_media_to_caption.edges[0].node.text : '')
+          .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
         }
       })
 
@@ -124,12 +125,13 @@ client.on('messageCreate', async msg => {
           const func = $(this)['0'].children[0]?.data
           const extractedJson = func.replace(/(^window\.__additionalDataLoaded\('(\/|[0-9A-z]|-)+',)|(\);$)/g, '')
           const json = JSON.parse(extractedJson)
-          const author = `${json.graphql.shortcode_media.owner.full_name} (${json.graphql.shortcode_media.owner.username})`
+          const data = json.graphql.shortcode_media
+          const author = `${data.owner.full_name} (${data.owner.username})`
           
           embed
-          .setImage(json.graphql.shortcode_media.display_url)
-          .setDescription(json.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text)
-          .setAuthor(author, json.graphql.shortcode_media.owner.profile_pic_url, `https://www.instagram.com/${json.graphql.shortcode_media.owner.username}`)
+          .setImage(data.display_url)
+          .setDescription(data.edge_media_to_caption.edges[0] ? data.edge_media_to_caption.edges[0].node.text : '')
+          .setAuthor(author, data.owner.profile_pic_url, `https://www.instagram.com/${data.owner.username}`)
         }
       })
 
