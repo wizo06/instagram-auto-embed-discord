@@ -102,7 +102,7 @@ client.on('messageCreate', async msg => {
         }
       })
 
-      return await msg.channel.send(embed)
+      return await msg.channel.send({ embeds: [embed] })
     }
 
     // TV
@@ -135,7 +135,7 @@ client.on('messageCreate', async msg => {
         }
       })
 
-      return await msg.channel.send(embed)
+      return await msg.channel.send({ embeds: [embed] })
     }
 
     // Profile
@@ -162,7 +162,7 @@ client.on('messageCreate', async msg => {
         if (property === 'og:description') embed.setDescription(val)
       })
 
-      return await msg.channel.send(embed)
+      return await msg.channel.send({ embeds: [embed] })
     }
   }
 })
